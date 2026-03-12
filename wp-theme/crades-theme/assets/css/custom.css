@@ -1,10 +1,10 @@
 /**
- * CRADES Theme — Custom Styles
+ * CRADES Theme â€” Custom Styles
  * Complementary CSS for FSE blocks
  * @version 2.0.0
  */
 
-/* ── Global ─────────────────────────────── */
+/* â”€â”€ Global â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
   --crades-primary: #044bad;
   --crades-navy: #032d6b;
@@ -26,13 +26,13 @@ body {
 /* Smooth scroll */
 html { scroll-behavior: smooth; }
 
-/* ── Selection ──────────────────────────── */
+/* â”€â”€ Selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::selection {
   background: var(--crades-ice);
   color: var(--crades-navy);
 }
 
-/* ── Animations ─────────────────────────── */
+/* â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -51,7 +51,7 @@ html { scroll-behavior: smooth; }
   animation: fadeIn 0.5s ease forwards;
 }
 
-/* ── Cards ──────────────────────────────── */
+/* â”€â”€ Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-card {
   transition: box-shadow var(--crades-transition), transform var(--crades-transition);
   border-radius: 8px;
@@ -62,7 +62,7 @@ html { scroll-behavior: smooth; }
   transform: translateY(-2px);
 }
 
-/* ── Indicator card ─────────────────────── */
+/* â”€â”€ Indicator card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-indicator-card {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -102,7 +102,7 @@ html { scroll-behavior: smooth; }
 .crades-indicator-change.up   { color: var(--crades-success); }
 .crades-indicator-change.down { color: var(--crades-danger); }
 
-/* ── Chart container ────────────────────── */
+/* â”€â”€ Chart container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-chart-wrap {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -120,7 +120,7 @@ html { scroll-behavior: smooth; }
   margin-bottom: 1rem;
 }
 
-/* ── Badges / Tags ──────────────────────── */
+/* â”€â”€ Badges / Tags â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-badge {
   display: inline-block;
   font-size: 0.6875rem;
@@ -139,31 +139,31 @@ html { scroll-behavior: smooth; }
   color: var(--crades-gold);
 }
 
-/* ── Stats strip ────────────────────────── */
+/* â”€â”€ Stats strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-stats-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-/* ── Navigation tweaks ──────────────────── */
+/* â”€â”€ Navigation tweaks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .wp-block-navigation a:hover {
   color: var(--crades-primary) !important;
 }
 
-/* ── Ministry bar ───────────────────────── */
+/* â”€â”€ Ministry bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-ministry-bar {
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* ── Hero section ───────────────────────── */
+/* â”€â”€ Hero section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .crades-hero-section {
   position: relative;
   overflow: hidden;
 }
 
-/* ── Buttons ────────────────────────────── */
+/* â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .wp-block-button__link {
   transition: background-color var(--crades-transition), color var(--crades-transition), transform var(--crades-transition);
 }
@@ -171,7 +171,7 @@ html { scroll-behavior: smooth; }
   transform: translateY(-1px);
 }
 
-/* ── Tables ─────────────────────────────── */
+/* â”€â”€ Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .wp-block-table table {
   border-collapse: collapse;
   width: 100%;
@@ -192,7 +192,7 @@ html { scroll-behavior: smooth; }
   background: #f8fafc;
 }
 
-/* ── Responsive ─────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
   .crades-stats-strip {
     grid-template-columns: repeat(2, 1fr);
@@ -207,7 +207,7 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* ── Print ──────────────────────────────── */
+/* â”€â”€ Print â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media print {
   .wp-block-navigation,
   .crades-ministry-bar,

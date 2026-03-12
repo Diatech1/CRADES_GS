@@ -166,6 +166,16 @@ export async function getIndicateurs(count = 10): Promise<WPPost[]> {
   })
 }
 
+/** Fetch commerce indicateurs (CPT with 'commerce' tag) */
+export async function getCommerceIndicateurs(count = 10): Promise<WPPost[]> {
+  return wpFetch<WPPost[]>('indicateur', {
+    per_page: String(count),
+    orderby: 'date',
+    order: 'asc',
+    tags: '5', // commerce tag ID
+  })
+}
+
 /** Fetch dashboards (CPT) */
 export async function getDashboards(count = 10): Promise<WPPost[]> {
   return wpFetch<WPPost[]>('dashboard', {

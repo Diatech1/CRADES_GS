@@ -9,7 +9,13 @@ import { dataPage } from './pages/data'
 import { actualitesPage } from './pages/actualites'
 import { actualiteDetailPage } from './pages/actualite-detail'
 import { contactPage } from './pages/contact'
+import { dash2Page } from './pages/dash2'
 import { commerceExterieurPage } from './pages/commerce-exterieur'
+import { commerceInterieurPage } from './pages/commerce-interieur'
+import { industriePage } from './pages/industrie'
+import { pmePmiPage } from './pages/pme-pmi'
+import { prototypeGensparkPage } from './pages/prototype-genspark'
+import { prototypeGensparkSplitPage } from './pages/prototype-genspark-split'
 import { adminRedirectPage } from './pages/admin'
 import { apiRoutes } from './api/routes'
 import { schemaOrg } from './utils/seo'
@@ -54,8 +60,44 @@ app.get('/donnees', async (c) => {
   return c.html(await dataPage())
 })
 
+app.get('/dash2', async (c) => {
+  return c.html(await dash2Page())
+})
+
 app.get('/commerce-exterieur', async (c) => {
   return c.html(await commerceExterieurPage())
+})
+
+app.get('/commerce-interieur', async (c) => {
+  return c.html(await commerceInterieurPage())
+})
+
+app.get('/industrie', async (c) => {
+  return c.html(await industriePage())
+})
+
+app.get('/pme-pmi', async (c) => {
+  return c.html(await pmePmiPage())
+})
+
+app.get('/prototype-genspark', async (c) => {
+  return c.html(await prototypeGensparkPage())
+})
+
+app.get('/prototype/commerce-exterieur', async (c) => {
+  return c.html(await prototypeGensparkSplitPage('commerce-exterieur'))
+})
+
+app.get('/prototype/commerce-interieur', async (c) => {
+  return c.html(await prototypeGensparkSplitPage('commerce-interieur'))
+})
+
+app.get('/prototype/industrie', async (c) => {
+  return c.html(await prototypeGensparkSplitPage('industrie'))
+})
+
+app.get('/prototype/pme-pmi', async (c) => {
+  return c.html(await prototypeGensparkSplitPage('pme'))
 })
 
 app.get('/actualites', async (c) => {

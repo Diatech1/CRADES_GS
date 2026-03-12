@@ -104,8 +104,11 @@ export function layout(content: string, options: { title?: string; description?:
             <i class="fas fa-chevron-down text-[8px] text-gray-400 group-hover:text-brand-blue transition-colors"></i>
           </button>
           <div class="dropdown-menu absolute top-full left-0 pt-2 hidden group-hover:block">
-            <div class="bg-white border border-gray-100 rounded-lg shadow-lg py-2 min-w-[200px]">
+            <div class="bg-white border border-gray-100 rounded-lg shadow-lg py-2 min-w-[220px]">
               <a href="/commerce-exterieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
+              <a href="/commerce-interieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Commerce intérieur', 'Domestic Trade', lang)}</a>
+              <a href="/industrie" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Industrie', 'Industry', lang)}</a>
+              <a href="/pme-pmi" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('PME/PMI', 'SMEs/SMBs', lang)}</a>
             </div>
           </div>
         </div>
@@ -146,7 +149,10 @@ export function layout(content: string, options: { title?: string; description?:
     <a href="/${lang === 'en' ? 'about' : 'a-propos'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('À propos', 'About', lang)}</a>
     <a href="/publications${lang === 'en' ? '?lang=en' : ''}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Publications', 'Publications', lang)}</a>
     <a href="/${lang === 'en' ? 'dashboards' : 'tableaux-de-bord'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Tableaux de bord', 'Dashboards', lang)}</a>
-    <a href="/commerce-exterieur" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
+    <a href="/commerce-exterieur" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
+    <a href="/commerce-interieur" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Commerce intérieur', 'Domestic Trade', lang)}</a>
+    <a href="/industrie" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Industrie', 'Industry', lang)}</a>
+    <a href="/pme-pmi" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('PME/PMI', 'SMEs/SMBs', lang)}</a>
     <a href="/${lang === 'en' ? 'news?lang=en' : 'actualites'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Actualités', 'News', lang)}</a>
     <a href="/contact${lang === 'en' ? '?lang=en' : ''}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Contact</a>
     <div class="pt-3 border-t border-gray-100 mt-3 flex gap-3 px-4 text-sm">

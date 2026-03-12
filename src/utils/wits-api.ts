@@ -7,6 +7,11 @@
  * Reporter: SEN (Senegal)
  * Format: JSON (SDMX-JSON)
  */
+import {
+  getComtradeAnnualOverview,
+  getComtradeReleases,
+  parseLatestYearFromReleases,
+} from './comtrade-api'
 
 const WITS_BASE = 'https://wits.worldbank.org/API/V1/SDMX/V21/datasource'
 const REPORTER = 'sen'
@@ -237,7 +242,11 @@ export async function getTradeTimeSeries(startYear = 2013, endYear = 2023): Prom
   // Fetch each year in parallel
   const yearRange = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i)
   const results = await Promise.all(
-    yearRange.map(y => getTradeOverview(y))
+    yearRange.map(async (y) => {
+      const comtrade = await getComtradeAnnualOverview(y)
+      if (comtrade) return comtrade
+      return getTradeOverview(y)
+    })
   )
 
   for (const r of results) {
@@ -355,12 +364,25 @@ export async function getTopPartners(year: number, indicator: 'XPRT-TRD-VL' | 'M
  * Get the latest available year of data
  */
 export async function getLatestAvailableYear(): Promise<number> {
+  const releases = await getComtradeReleases()
+  const latestReleaseYear = parseLatestYearFromReleases(releases)
+  if (latestReleaseYear && latestReleaseYear > 0) {
+    const candidateYears = [latestReleaseYear, latestReleaseYear - 1, latestReleaseYear - 2]
+    for (const year of candidateYears) {
+      const comtrade = await getComtradeAnnualOverview(year)
+      if (comtrade && comtrade.totalExports > 0) return year
+      const overview = await getTradeOverview(year)
+      if (overview && overview.totalExports > 0) return year
+    }
+  }
+
   // Try from newest to oldest
-  for (const year of [2024, 2023, 2022, 2021, 2020]) {
+  for (const year of [2026, 2025, 2024, 2023, 2022, 2021, 2020]) {
     const overview = await getTradeOverview(year)
     if (overview && overview.totalExports > 0) return year
   }
-  return 2022 // fallback
+  // No verified year available
+  return 0
 }
 
 /**
@@ -368,6 +390,8 @@ export async function getLatestAvailableYear(): Promise<number> {
  */
 export async function getTradeDashboardData() {
   const latestYear = await getLatestAvailableYear()
+  const releases = await getComtradeReleases()
+  const latestReleaseYear = parseLatestYearFromReleases(releases)
 
   const [
     overview,
@@ -376,7 +400,11 @@ export async function getTradeDashboardData() {
     topExportPartners,
     topImportPartners,
   ] = await Promise.all([
-    getTradeOverview(latestYear),
+    (async () => {
+      const comtrade = await getComtradeAnnualOverview(latestYear)
+      if (comtrade) return comtrade
+      return getTradeOverview(latestYear)
+    })(),
     getTradeTimeSeries(2013, latestYear),
     getTradeBySector(latestYear),
     getTopPartners(latestYear, 'XPRT-TRD-VL', 10),
@@ -385,12 +413,13 @@ export async function getTradeDashboardData() {
 
   return {
     latestYear,
+    latestReleaseYear,
     overview,
     timeSeries,
     sectors,
     topExportPartners,
     topImportPartners,
-    source: 'WITS - World Integrated Trade Solution (World Bank)',
+    source: 'Comtrade (priority when API key available) + WITS fallback',
     lastUpdated: new Date().toISOString(),
   }
 }

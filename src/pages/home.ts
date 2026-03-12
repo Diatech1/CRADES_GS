@@ -1,10 +1,11 @@
 import { layout } from '../components/layout'
-import { getPosts, getPublications, getIndicateurs, getDashboards, stripHtml, formatDate, WPPost } from '../utils/wp-api'
+import { getPosts, getPublications, getIndicateurs, getCommerceIndicateurs, getDashboards, stripHtml, formatDate, WPPost } from '../utils/wp-api'
 
 export async function homePage(): Promise<string> {
   // Fetch ALL data from WordPress REST API in parallel
-  const [indicateurs, dashboards, publications, actualites] = await Promise.all([
+  const [indicateurs, commerceIndicateurs, dashboards, publications, actualites] = await Promise.all([
     getIndicateurs(8),
+    getCommerceIndicateurs(4),
     getDashboards(4),
     getPublications(4),
     getPosts(3),
@@ -31,6 +32,7 @@ export async function homePage(): Promise<string> {
 
       return {
         id: `home-chart-${d.slug || d.id}`,
+        slug: d.slug || d.id,
         title: d.title?.rendered || '',
         label: chartData.label || d.title?.rendered || '',
         data: chartData.data,
@@ -47,7 +49,7 @@ export async function homePage(): Promise<string> {
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-20 ${validIndicateurs.length > 0 ? 'pb-28 lg:pb-32' : ''}">
     <div class="max-w-xl">
       <h1 class="font-display font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-brand-navy leading-tight">
-        Centre de Recherche, d'Analyse des Échanges et Statistiques
+        Centre de Recherche,<br>d'Analyse&nbsp;des&nbsp;Échanges et&nbsp;Statistiques
       </h1>
       <p class="text-gray-600 mt-5 text-sm leading-relaxed">
         Le CRADES produit et diffuse les statistiques, études et analyses stratégiques sur l'industrie et le commerce du Sénégal.
@@ -87,7 +89,65 @@ export async function homePage(): Promise<string> {
   ` : ''}
 </section>
 
+<!-- Commerce International KPI Section -->
+${commerceIndicateurs.length > 0 ? `
+<section class="py-16 bg-white border-b border-gray-100">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between mb-10">
+      <h2 class="font-display text-xl text-gray-800">Commerce International</h2>
+      <a href="/commerce-exterieur" class="text-xs text-brand-gold hover:underline">Voir détails &rarr;</a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      ${commerceIndicateurs.map((ind: WPPost) => {
+        const val = ind.meta?.indicateur_value || ''
+        const unit = ind.meta?.indicateur_unit || ''
+        const name = ind.title?.rendered || ''
+        const dir = ind.meta?.indicateur_change_direction
+        const pct = ind.meta?.indicateur_change_percent
+        const isNegative = val && val.toString().startsWith('-')
+        return `
+        <div class="bg-brand-frost rounded-lg p-6 border border-brand-ice/60 text-center">
+          <div class="text-4xl font-bold ${isNegative ? 'text-red-600' : 'text-brand-blue'} leading-tight">${val}</div>
+          ${unit ? `<div class="text-xs text-gray-500 mt-1">${unit}</div>` : ''}
+          <div class="text-sm font-medium text-gray-800 mt-4">${name}</div>
+          ${pct ? `<div class="text-xs mt-2 ${dir === 'up' ? 'text-emerald-600' : 'text-red-600'}">${dir === 'up' ? '↑' : '↓'} ${Math.abs(pct)}%</div>` : ''}
+        </div>`
+      }).join('')}
+    </div>
+  </div>
+</section>
+` : ''}
+
 ${chartConfigs.length > 0 ? `
+<!-- KPI Cards Section -->
+<section class="py-16 bg-brand-frost border-b border-brand-ice/50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between mb-10">
+      <h2 class="font-display text-xl text-gray-800">Indicateurs clés</h2>
+      <a href="/tableaux-de-bord" class="text-xs text-brand-gold hover:underline">Voir tout &rarr;</a>
+    </div>
+    ${validIndicateurs.length > 0 ? `
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      ${validIndicateurs.slice(0, 4).map((ind: WPPost) => {
+        const val = ind.meta?.indicateur_value || ''
+        const unit = ind.meta?.indicateur_unit || ''
+        const name = ind.title?.rendered || ''
+        const dir = ind.meta?.indicateur_change_direction
+        const pct = ind.meta?.indicateur_change_percent
+        const isNegative = val && val.toString().startsWith('-')
+        return `
+        <div class="bg-white rounded-lg p-6 border border-brand-ice/60 text-center">
+          <div class="text-4xl font-bold ${isNegative ? 'text-red-600' : 'text-brand-blue'} leading-tight">${val}</div>
+          ${unit ? `<div class="text-xs text-gray-500 mt-1">${unit}</div>` : ''}
+          <div class="text-sm font-medium text-gray-800 mt-4">${name}</div>
+          ${pct ? `<div class="text-xs mt-2 ${dir === 'up' ? 'text-emerald-600' : 'text-red-600'}">${dir === 'up' ? '↑' : '↓'} ${Math.abs(pct)}%</div>` : ''}
+        </div>`
+      }).join('')}
+    </div>
+    ` : ''}
+  </div>
+</section>
+
 <!-- Dashboard charts — dynamic from WordPress dashboards -->
 <section class="py-12 border-b border-gray-100">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -97,20 +157,20 @@ ${chartConfigs.length > 0 ? `
     </div>
     <div class="grid lg:grid-cols-2 gap-6">
       ${chartConfigs.map((d: any) => `
-        <div class="border border-gray-100 rounded-lg p-5">
+        <a href="/tableaux-de-bord/${d.slug}" class="block border border-gray-100 rounded-lg p-5 hover:shadow-md transition">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-medium text-gray-800">${d.title}</h3>
           </div>
           <div class="bg-gray-50 rounded-md p-3">
             <canvas id="${d.id}" height="160"></canvas>
           </div>
-        </div>
+        </a>
       `).join('')}
     </div>
   </div>
 </section>
 ` : `
-<!-- No dashboards yet -->
+<!-- Dashboard charts — fallback section -->
 <section class="py-12 border-b border-gray-100">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center py-8">
     <i class="fas fa-chart-area text-3xl mb-3 text-brand-ice"></i>

@@ -8,7 +8,7 @@ get_template_part( 'template-parts/header' );
 
 <?php crades_page_header(
     'CRADES',
-    'Centre de Recherche, d\'Analyse des Échanges et Statistiques',
+    'Centre de Recherche, d\'Analyse des Ã‰changes et Statistiques',
     []
 ); ?>
 

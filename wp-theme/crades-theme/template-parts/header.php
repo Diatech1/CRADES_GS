@@ -1,6 +1,6 @@
 <?php
 /**
- * CRADES Header — Exact replica of Hono frontend
+ * CRADES Header â€” Exact replica of Hono frontend
  * Ministry bar + Sticky header + Mobile menu + Search modal
  */
 $logo_crades = crades_img( 'logo-crades.png' );
@@ -22,12 +22,12 @@ $logo_mincom = crades_img( 'logo-mincom.png' );
     "@context": "https://schema.org",
     "@type": "GovernmentOrganization",
     "name": "CRADES",
-    "alternateName": "Centre de Recherche, d'Analyse des Échanges et Statistiques",
+    "alternateName": "Centre de Recherche, d'Analyse des Ã‰changes et Statistiques",
     "url": "https://crades.gouv.sn",
     "logo": "https://crades.gouv.sn/static/img/logo-crades.png",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Rue Aimé Césaire, Plateau",
+      "streetAddress": "Rue AimÃ© CÃ©saire, Plateau",
       "addressLocality": "Dakar",
       "addressCountry": "SN"
     }
@@ -55,7 +55,7 @@ $logo_mincom = crades_img( 'logo-mincom.png' );
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center gap-5 xl:gap-6 text-[13px] font-medium text-gray-500">
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">Accueil</a>
-        <a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">À propos</a>
+        <a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">Ã€ propos</a>
         <a href="<?php echo esc_url( home_url( '/publications/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">Publications</a>
         <div class="relative group">
           <button class="hover:text-brand-blue transition-colors flex items-center gap-1 whitespace-nowrap" onclick="this.parentElement.querySelector('.dropdown-menu').classList.toggle('hidden')">
@@ -64,11 +64,11 @@ $logo_mincom = crades_img( 'logo-mincom.png' );
           </button>
           <div class="dropdown-menu absolute top-full left-0 pt-2 hidden group-hover:block">
             <div class="bg-white border border-gray-100 rounded-lg shadow-lg py-2 min-w-[200px]">
-              <a href="<?php echo esc_url( home_url( '/commerce-exterieur/' ) ); ?>" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">Commerce extérieur</a>
+              <a href="<?php echo esc_url( home_url( '/commerce-exterieur/' ) ); ?>" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">Commerce extÃ©rieur</a>
             </div>
           </div>
         </div>
-        <a href="<?php echo esc_url( home_url( '/actualites/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">Actualités</a>
+        <a href="<?php echo esc_url( home_url( '/actualites/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">ActualitÃ©s</a>
         <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="hover:text-brand-blue transition-colors whitespace-nowrap">Contact</a>
       </nav>
 
@@ -102,14 +102,14 @@ $logo_mincom = crades_img( 'logo-mincom.png' );
   </div>
   <nav class="p-4 space-y-1">
     <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Accueil</a>
-    <a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">À propos</a>
+    <a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Ã€ propos</a>
     <a href="<?php echo esc_url( home_url( '/publications/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Publications</a>
     <a href="<?php echo esc_url( home_url( '/tableaux-de-bord/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Tableaux de bord</a>
-    <a href="<?php echo esc_url( home_url( '/commerce-exterieur/' ) ); ?>" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>Commerce extérieur</a>
-    <a href="<?php echo esc_url( home_url( '/actualites/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Actualités</a>
+    <a href="<?php echo esc_url( home_url( '/commerce-exterieur/' ) ); ?>" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>Commerce extÃ©rieur</a>
+    <a href="<?php echo esc_url( home_url( '/actualites/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">ActualitÃ©s</a>
     <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Contact</a>
     <div class="pt-3 border-t border-gray-100 mt-3 flex gap-3 px-4 text-sm">
-      <a href="?lang=fr" class="text-brand-blue font-semibold">Français</a>
+      <a href="?lang=fr" class="text-brand-blue font-semibold">FranÃ§ais</a>
       <a href="?lang=en" class="text-gray-400">English</a>
     </div>
   </nav>
@@ -151,7 +151,7 @@ function handleSearch(q) {
           '<i class="fas fa-chevron-right text-[10px] text-gray-300"></i></a>'
         ).join('');
       } else {
-        results.innerHTML = '<p class="text-center text-gray-400 text-sm py-8">Aucun résultat</p>';
+        results.innerHTML = '<p class="text-center text-gray-400 text-sm py-8">Aucun rÃ©sultat</p>';
       }
     } catch(e) { console.error(e); }
   }, 300);

@@ -1,12 +1,12 @@
 /**
- * CRADES Theme — Main JavaScript
+ * CRADES Theme â€” Main JavaScript
  * Frontend interactivity for the CRADES WordPress theme
  * @version 2.0.0
  */
 (function () {
   'use strict';
 
-  /* ── Mobile menu toggle ─────────────────── */
+  /* â”€â”€ Mobile menu toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function initMobileMenu() {
     const menuBtn = document.querySelector('.crades-mobile-menu-btn');
     const mobileMenu = document.querySelector('.crades-mobile-menu');
@@ -20,7 +20,7 @@
     });
   }
 
-  /* ── Scroll-to-top button ───────────────── */
+  /* â”€â”€ Scroll-to-top button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function initScrollToTop() {
     const btn = document.createElement('button');
     btn.className = 'crades-scroll-top';
@@ -50,7 +50,7 @@
     });
   }
 
-  /* ── Fade-up animation on scroll ────────── */
+  /* â”€â”€ Fade-up animation on scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function initFadeUp() {
     const els = document.querySelectorAll('.crades-fade-up');
     if (!els.length || !('IntersectionObserver' in window)) return;
@@ -70,7 +70,7 @@
     });
   }
 
-  /* ── Smooth anchor links ────────────────── */
+  /* â”€â”€ Smooth anchor links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function initSmoothAnchors() {
     document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       link.addEventListener('click', function (e) {
@@ -83,7 +83,7 @@
     });
   }
 
-  /* ── Header shrink on scroll ────────────── */
+  /* â”€â”€ Header shrink on scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function initHeaderShrink() {
     var header = document.querySelector('.wp-block-template-part');
     if (!header) return;
@@ -97,7 +97,7 @@
     });
   }
 
-  /* ── Init all ───────────────────────────── */
+  /* â”€â”€ Init all â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   document.addEventListener('DOMContentLoaded', function () {
     initMobileMenu();
     initScrollToTop();

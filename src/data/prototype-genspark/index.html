@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableaux de bord CRADES - Sénégal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#032d6b',
+                            blue: '#044bad',
+                            sky: '#3a7fd4',
+                            ice: '#c7ddf5',
+                            frost: '#eef4fb',
+                            gold: '#b8943e',
+                            'gold-light': '#d4b262',
+                        },
+                        success: '#059669',
+                        danger: '#dc2626',
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'system-ui', 'sans-serif'],
+                        display: ['Montserrat', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .kpi-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #eef4fb;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #032d6b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #032d6b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        tbody tr:hover {
+            background: #eef4fb;
+        }
+        
+        .trend-up {
+            color: #059669;
+        }
+        
+        .trend-down {
+            color: #dc2626;
+        }
+        
+        .trend-neutral {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 antialiased">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <!-- Ministry bar -->
+            <div class="bg-brand-frost py-2 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-3">
+                <div class="flex items-center justify-between text-xs text-brand-navy">
+                    <span class="font-medium"><i class="fas fa-landmark mr-2"></i>Ministère du Commerce et de l'Industrie</span>
+                    <span>République du Sénégal</span>
+                </div>
+            </div>
+            
+            <!-- Main header -->
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-brand-blue text-white rounded-lg p-2">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-brand-navy">CRADES</h1>
+                        <p class="text-xs text-gray-600">Centre de Recherche, d'Analyse des Échanges et Statistiques</p>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-3">
+                    <button class="text-sm text-gray-600 hover:text-brand-blue">
+                        <i class="far fa-bell mr-1"></i> Alertes
+                    </button>
+                    <button class="text-sm text-gray-600 hover:text-brand-blue">
+                        <i class="far fa-user-circle mr-1"></i> Admin
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <nav class="flex gap-1 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
+                <button onclick="switchTab('commerce-exterieur')" 
+                        class="tab-btn px-6 py-3 text-sm font-semibold whitespace-nowrap border-b-3 transition-colors"
+                        data-tab="commerce-exterieur">
+                    <i class="fas fa-globe-americas mr-2"></i>Commerce Extérieur
+                </button>
+                <button onclick="switchTab('commerce-interieur')" 
+                        class="tab-btn px-6 py-3 text-sm font-semibold whitespace-nowrap border-b-3 transition-colors"
+                        data-tab="commerce-interieur">
+                    <i class="fas fa-store mr-2"></i>Commerce Intérieur
+                </button>
+                <button onclick="switchTab('industrie')" 
+                        class="tab-btn px-6 py-3 text-sm font-semibold whitespace-nowrap border-b-3 transition-colors"
+                        data-tab="industrie">
+                    <i class="fas fa-industry mr-2"></i>Industrie
+                </button>
+                <button onclick="switchTab('pme')" 
+                        class="tab-btn px-6 py-3 text-sm font-semibold whitespace-nowrap border-b-3 transition-colors"
+                        data-tab="pme">
+                    <i class="fas fa-briefcase mr-2"></i>PME
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- ============================================ -->
+        <!-- DASHBOARD 1: COMMERCE EXTÉRIEUR -->
+        <!-- ============================================ -->
+        <div id="commerce-exterieur" class="tab-content active">
+            <!-- Page Header -->
+            <div class="bg-brand-navy rounded-lg p-6 mb-6 text-white">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Commerce Extérieur du Sénégal</h2>
+                        <p class="text-brand-ice text-sm">Statistiques des échanges commerciaux internationaux - Année 2025</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> ANSD
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="far fa-calendar"></i> Mis à jour : Fév 2026
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-brand-navy px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-frost transition">
+                            <i class="fas fa-download mr-2"></i>Télécharger PDF
+                        </button>
+                        <button class="bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-gold-light transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Actualiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-blue shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Exportations 2025</p>
+                            <p class="text-2xl font-bold text-brand-navy">5 935,2</p>
+                            <p class="text-xs text-gray-600 mt-1">Milliards FCFA</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        +51,8% vs 2024
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-sky shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Importations 2025</p>
+                            <p class="text-2xl font-bold text-brand-navy">7 279,1</p>
+                            <p class="text-xs text-gray-600 mt-1">Milliards FCFA</p>
+                        </div>
+                        <div class="bg-gray-200 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-gray-600"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-gray-600 text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        +1,6% vs 2024
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-gold shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Balance Commerciale</p>
+                            <p class="text-2xl font-bold text-brand-navy">-1 343,9</p>
+                            <p class="text-xs text-gray-600 mt-1">Milliards FCFA</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        Amélioration significative
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-blue shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Échanges Totaux</p>
+                            <p class="text-2xl font-bold text-brand-navy">13 214,3</p>
+                            <p class="text-xs text-gray-600 mt-1">Milliards FCFA</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        +19,36% vs 2024
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart 1 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Évolution Commerce Extérieur (2020-2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ce-evolution"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Balance Commerciale (2020-2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ce-balance"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Top 5 Destinations d'Exportation (Déc 2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ce-destinations"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Top 5 Fournisseurs (Déc 2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ce-fournisseurs"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 5 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm lg:col-span-2">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Structure des Exportations (Déc 2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ce-structure"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-brand-navy mb-4">Principaux Produits Échangés</h3>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Exportations (Mds FCFA)</th>
+                                <th>Variation (%)</th>
+                                <th>Importations (Mds FCFA)</th>
+                                <th>Variation (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Or non monétaire</td>
+                                <td>206,8</td>
+                                <td class="trend-up font-semibold">+115,7%</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Huiles brutes de pétrole</td>
+                                <td>106,3</td>
+                                <td class="trend-up font-semibold">+133,6%</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Produits pétroliers raffinés</td>
+                                <td>90,4</td>
+                                <td class="trend-up font-semibold">+81,9%</td>
+                                <td>105,5</td>
+                                <td class="trend-up font-semibold">+37,0%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Matériels de transport</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>7,3</td>
+                                <td class="trend-down font-semibold">-96,3%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Produits pharmaceutiques</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>17,6</td>
+                                <td class="trend-down font-semibold">-26,4%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Métaux communs</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>45,0</td>
+                                <td class="trend-up font-semibold">+141,9%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Source Footer -->
+            <div class="bg-brand-frost rounded-lg p-4 border-l-4 border-brand-blue">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-info-circle text-brand-blue mt-1"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-brand-navy mb-1">Sources</p>
+                        <p class="text-gray-700">ANSD - Bulletin Mensuel des Statistiques du Commerce Extérieur (BMSCE), Décembre 2025, publié le 18 février 2026.</p>
+                        <a href="https://www.ansd.sn" target="_blank" class="text-brand-blue hover:underline font-medium mt-1 inline-block">
+                            <i class="fas fa-external-link-alt mr-1"></i>https://www.ansd.sn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- DASHBOARD 2: COMMERCE INTÉRIEUR -->
+        <!-- ============================================ -->
+        <div id="commerce-interieur" class="tab-content">
+            <!-- Page Header -->
+            <div class="bg-brand-navy rounded-lg p-6 mb-6 text-white">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Commerce Intérieur</h2>
+                        <p class="text-brand-ice text-sm">Suivi des marchés, prix et consommation - Année 2025</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> DCI
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> ANSD
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="far fa-calendar"></i> Mis à jour : Fév 2026
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-brand-navy px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-frost transition">
+                            <i class="fas fa-download mr-2"></i>Télécharger PDF
+                        </button>
+                        <button class="bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-gold-light transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Actualiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-success shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Ventes au Détail</p>
+                            <p class="text-2xl font-bold text-brand-navy">+8,3%</p>
+                            <p class="text-xs text-gray-600 mt-1">Variation annuelle T3 2025</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        Croissance soutenue
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-blue shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">IPC Général</p>
+                            <p class="text-2xl font-bold text-brand-navy">+3,2%</p>
+                            <p class="text-xs text-gray-600 mt-1">Déc 2025 (glissement annuel)</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-check mr-1"></i>
+                        Inflation maîtrisée
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-gold shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Prix Riz Brisé</p>
+                            <p class="text-2xl font-bold text-brand-navy">350</p>
+                            <p class="text-xs text-gray-600 mt-1">FCFA/kg</p>
+                        </div>
+                        <div class="bg-gray-200 rounded-full p-2">
+                            <i class="fas fa-minus text-gray-600"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-gray-600 text-sm font-semibold">
+                        <i class="fas fa-lock mr-1"></i>
+                        Stable (gel importations)
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-sky shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Marchés Surveillés</p>
+                            <p class="text-2xl font-bold text-brand-navy">42</p>
+                            <p class="text-xs text-gray-600 mt-1">Marchés</p>
+                        </div>
+                        <div class="bg-brand-blue/10 rounded-full p-2">
+                            <i class="fas fa-store text-brand-blue"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-brand-blue text-sm font-semibold">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        Couverture nationale
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart 1 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Évolution IPC (2021-2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ci-ipc"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Ventes au Détail - Variation Annuelle</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ci-ventes"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Marchés Surveillés par Région</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ci-marches"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Structure Consommation Ménages</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ci-consommation"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-brand-navy mb-4">Suivi des Prix - Produits de Première Nécessité</h3>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Unité</th>
+                                <th>Prix Déc 2025</th>
+                                <th>Prix Nov 2025</th>
+                                <th>Variation (%)</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Riz brisé importé</td>
+                                <td>kg</td>
+                                <td>350 FCFA</td>
+                                <td>350 FCFA</td>
+                                <td class="trend-neutral font-semibold">0,0%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Huile végétale</td>
+                                <td>litre</td>
+                                <td>875 FCFA</td>
+                                <td>885 FCFA</td>
+                                <td class="trend-down font-semibold">-1,1%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Sucre cristallisé</td>
+                                <td>kg</td>
+                                <td>560 FCFA</td>
+                                <td>570 FCFA</td>
+                                <td class="trend-down font-semibold">-1,8%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Pain ordinaire</td>
+                                <td>unité (200g)</td>
+                                <td>175 FCFA</td>
+                                <td>175 FCFA</td>
+                                <td class="trend-neutral font-semibold">0,0%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Mil local</td>
+                                <td>kg</td>
+                                <td>285 FCFA</td>
+                                <td>280 FCFA</td>
+                                <td class="trend-up font-semibold">+1,8%</td>
+                                <td><span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold">Surveillé</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Oignons local</td>
+                                <td>kg</td>
+                                <td>420 FCFA</td>
+                                <td>410 FCFA</td>
+                                <td class="trend-up font-semibold">+2,4%</td>
+                                <td><span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold">Surveillé</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Source Footer -->
+            <div class="bg-brand-frost rounded-lg p-4 border-l-4 border-brand-blue">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-info-circle text-brand-blue mt-1"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-brand-navy mb-1">Sources</p>
+                        <p class="text-gray-700">Direction du Commerce Intérieur (DCI), Ministère du Commerce et de l'Industrie, ANSD - Données au 31 décembre 2025.</p>
+                        <div class="mt-2 space-x-3">
+                            <a href="https://www.dci-sn.sn" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>www.dci-sn.sn
+                            </a>
+                            <a href="https://industriecommerce.gouv.sn" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>industriecommerce.gouv.sn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- DASHBOARD 3: INDUSTRIE -->
+        <!-- ============================================ -->
+        <div id="industrie" class="tab-content">
+            <!-- Page Header -->
+            <div class="bg-brand-navy rounded-lg p-6 mb-6 text-white">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Secteur Industriel</h2>
+                        <p class="text-brand-ice text-sm">Indices de production, chiffre d'affaires et prix - Année 2025-2026</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> ANSD
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="far fa-calendar"></i> Mis à jour : Fév 2026
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-brand-navy px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-frost transition">
+                            <i class="fas fa-download mr-2"></i>Télécharger PDF
+                        </button>
+                        <button class="bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-gold-light transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Actualiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-success shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">IHPI Déc 2025</p>
+                            <p class="text-2xl font-bold text-brand-navy">+27,5%</p>
+                            <p class="text-xs text-gray-600 mt-1">vs Déc 2024</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-industry mr-1"></i>
+                        Production industrielle
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-blue shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">IHPI Cumul 2025</p>
+                            <p class="text-2xl font-bold text-brand-navy">+24,9%</p>
+                            <p class="text-xs text-gray-600 mt-1">vs 2024</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        Croissance annuelle
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-gold shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">ICAI T3 2025</p>
+                            <p class="text-2xl font-bold text-brand-navy">+16,5%</p>
+                            <p class="text-xs text-gray-600 mt-1">vs T3 2024</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        Chiffre d'affaires
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-sky shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">IPPI Jan 2026</p>
+                            <p class="text-2xl font-bold text-brand-navy">+0,6%</p>
+                            <p class="text-xs text-gray-600 mt-1">Variation mensuelle</p>
+                        </div>
+                        <div class="bg-gray-200 rounded-full p-2">
+                            <i class="fas fa-minus text-gray-600"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-gray-600 text-sm font-semibold">
+                        <i class="fas fa-tag mr-1"></i>
+                        Prix à la production
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart 1 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">IHPI Mensuel 2025 (Variation %)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ind-ihpi"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">ICAI Trimestriel par Sous-Secteur</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ind-icai"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Structure Production par Sous-Secteur</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ind-structure"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">IPPI Évolution Mensuelle 2025</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ind-ippi"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 5 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm lg:col-span-2">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Taux d'Utilisation des Capacités Productives 2025</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-ind-utilisation"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-brand-navy mb-4">Indicateurs par Sous-Secteur Industriel</h3>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sous-Secteur</th>
+                                <th>IHPI Var. (%)</th>
+                                <th>ICAI Var. (%)</th>
+                                <th>Part PIB (%)</th>
+                                <th>Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Industries extractives</td>
+                                <td class="trend-up font-semibold">+42,1%</td>
+                                <td class="trend-up font-semibold">+42,1%</td>
+                                <td>35%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Élevée</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Industries manufacturières</td>
+                                <td class="trend-up font-semibold">+18,3%</td>
+                                <td class="trend-up font-semibold">+6,2%</td>
+                                <td>38%</td>
+                                <td><span class="px-2 py-1 bg-success/10 text-success rounded text-xs font-semibold">Élevée</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Énergie et eau</td>
+                                <td class="trend-up font-semibold">+15,2%</td>
+                                <td class="trend-up font-semibold">+11,8%</td>
+                                <td>18%</td>
+                                <td><span class="px-2 py-1 bg-brand-blue/10 text-brand-blue rounded text-xs font-semibold">Moyenne</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">BTP</td>
+                                <td class="trend-up font-semibold">+8,5%</td>
+                                <td class="trend-up font-semibold">+7,1%</td>
+                                <td>9%</td>
+                                <td><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">Modérée</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Source Footer -->
+            <div class="bg-brand-frost rounded-lg p-4 border-l-4 border-brand-blue">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-info-circle text-brand-blue mt-1"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-brand-navy mb-1">Sources</p>
+                        <p class="text-gray-700">ANSD - Indice Harmonisé de la Production Industrielle (IHPI) Décembre 2025, Indices du Chiffre d'Affaires dans l'Industrie (ICAI) T3 2025, Indice des Prix à la Production Industrielle (IPPI) Janvier 2026.</p>
+                        <div class="mt-2 space-x-3">
+                            <a href="https://www.ansd.sn/Indicateur/indice-harmonise-de-la-production-industrielle-ihpi" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>IHPI
+                            </a>
+                            <a href="https://www.ansd.sn/Indicateur/indices-du-chiffre-daffaires-dans-lindustrie-icai" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>ICAI
+                            </a>
+                            <a href="https://www.ansd.sn/Indicateur/indice-des-prix-la-production-industrielle-ippi" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>IPPI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- DASHBOARD 4: PME -->
+        <!-- ============================================ -->
+        <div id="pme" class="tab-content">
+            <!-- Page Header -->
+            <div class="bg-brand-navy rounded-lg p-6 mb-6 text-white">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Petites et Moyennes Entreprises (PME)</h2>
+                        <p class="text-brand-ice text-sm">Climat des affaires, financement et accompagnement - Année 2025</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> ADEPME
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> FONGIP
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="fas fa-database"></i> DPEE
+                            </span>
+                            <span class="source-badge bg-white/20 text-white">
+                                <i class="far fa-calendar"></i> Mis à jour : Fév 2026
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-brand-navy px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-frost transition">
+                            <i class="fas fa-download mr-2"></i>Télécharger PDF
+                        </button>
+                        <button class="bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-gold-light transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Actualiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-success shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Climat des Affaires</p>
+                            <p class="text-2xl font-bold text-brand-navy">+1,8 pts</p>
+                            <p class="text-xs text-gray-600 mt-1">Oct 2025</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        Amélioration continue
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-blue shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">PME Accompagnées</p>
+                            <p class="text-2xl font-bold text-brand-navy">2 847</p>
+                            <p class="text-xs text-gray-600 mt-1">ADEPME 2025</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-caret-up mr-1"></i>
+                        +18% vs 2024
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-gold shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Garanties FONGIP</p>
+                            <p class="text-2xl font-bold text-brand-navy">45,3</p>
+                            <p class="text-xs text-gray-600 mt-1">Milliards FCFA</p>
+                        </div>
+                        <div class="bg-success/10 rounded-full p-2">
+                            <i class="fas fa-arrow-up text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-success text-sm font-semibold">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        Engagements actifs
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white rounded-lg p-5 border-l-4 border-brand-sky shadow-sm">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Contribution PIB</p>
+                            <p class="text-2xl font-bold text-brand-navy">~42%</p>
+                            <p class="text-xs text-gray-600 mt-1">Part PME dans le PIB</p>
+                        </div>
+                        <div class="bg-brand-blue/10 rounded-full p-2">
+                            <i class="fas fa-chart-pie text-brand-blue"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center text-brand-blue text-sm font-semibold">
+                        <i class="fas fa-landmark mr-1"></i>
+                        Contribution économique
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart 1 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Indicateur Climat des Affaires (2025)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-pme-climat"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Répartition PME par Secteur</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-pme-secteur"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm lg:col-span-2">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Accès au Financement PME (Mds FCFA)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-pme-financement"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">Répartition par Taille d'Entreprise</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-pme-taille"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 5 -->
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-brand-navy mb-4">PME Formalisées par Région (Top 5)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-pme-region"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-brand-navy mb-4">Programmes d'Appui PME Actifs en 2025</h3>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Programme</th>
+                                <th>Organisme</th>
+                                <th>Type d'Appui</th>
+                                <th>Montant/Bénéficiaires</th>
+                                <th>Cible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">Accès au financement</td>
+                                <td>FONGIP</td>
+                                <td>Garanties bancaires</td>
+                                <td>45,3 Mds FCFA</td>
+                                <td>PME/PMI, Artisans</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Accompagnement technique</td>
+                                <td>ADEPME</td>
+                                <td>Conseil, formation</td>
+                                <td>2 847 PME</td>
+                                <td>Toutes PME</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">DER/FJ</td>
+                                <td>Délégation Entrepreneuriat Rapide</td>
+                                <td>Financement direct</td>
+                                <td>18,7 Mds FCFA</td>
+                                <td>Jeunes, Femmes</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Crédits bancaires PME</td>
+                                <td>Secteur bancaire</td>
+                                <td>Prêts directs</td>
+                                <td>320 Mds FCFA</td>
+                                <td>PME formalisées</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">BNDE</td>
+                                <td>Banque Nationale Développement</td>
+                                <td>Financement projets</td>
+                                <td>25+ Mds FCFA</td>
+                                <td>Projets structurants</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Source Footer -->
+            <div class="bg-brand-frost rounded-lg p-4 border-l-4 border-brand-blue">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-info-circle text-brand-blue mt-1"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-brand-navy mb-1">Sources</p>
+                        <p class="text-gray-700">ADEPME (Agence de Développement et d'Encadrement des PME), FONGIP (Fonds de Garantie des Investissements Prioritaires), DPEE - Tableau de bord Octobre 2025, Financial Afrik Janvier 2026.</p>
+                        <div class="mt-2 space-x-3">
+                            <a href="https://adepme.sn" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>adepme.sn
+                            </a>
+                            <a href="https://fongip.com" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>fongip.com
+                            </a>
+                            <a href="https://dpee.sn" target="_blank" class="text-brand-blue hover:underline font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>dpee.sn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-navy text-white mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-center md:text-left">
+                    <p class="font-bold text-lg mb-1">CRADES</p>
+                    <p class="text-brand-ice text-sm">Centre de Recherche, d'Analyse des Échanges et Statistiques</p>
+                    <p class="text-brand-ice text-xs mt-2">Ministère du Commerce et de l'Industrie - République du Sénégal</p>
+                </div>
+                <div class="text-center md:text-right text-sm">
+                    <p class="text-brand-ice">© 2026 CRADES - Tous droits réservés</p>
+                    <p class="text-brand-ice text-xs mt-1">Dernière mise à jour : Février 2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-blue', 'text-white', 'border-brand-blue');
+                btn.classList.add('text-gray-600', 'border-transparent', 'hover:text-brand-blue');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            activeBtn.classList.remove('text-gray-600', 'border-transparent', 'hover:text-brand-blue');
+            activeBtn.classList.add('bg-brand-blue', 'text-white', 'border-brand-blue');
+        }
+
+        // Initialize first tab as active
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstBtn = document.querySelector('.tab-btn');
+            firstBtn.classList.add('bg-brand-blue', 'text-white', 'border-brand-blue');
+            
+            // Initialize all charts
+            initCommerceExterieurCharts();
+            initCommerceInterieurCharts();
+            initIndustrieCharts();
+            initPMECharts();
+        });
+
+        // Chart configurations
+        const brandColors = {
+            navy: '#032d6b',
+            blue: '#044bad',
+            sky: '#3a7fd4',
+            ice: '#c7ddf5',
+            frost: '#eef4fb',
+            gold: '#b8943e',
+            goldLight: '#d4b262',
+            success: '#059669',
+            danger: '#dc2626'
+        };
+
+        // ============================================
+        // COMMERCE EXTÉRIEUR CHARTS
+        // ============================================
+        function initCommerceExterieurCharts() {
+            // Chart 1: Évolution Commerce Extérieur
+            new Chart(document.getElementById('chart-ce-evolution'), {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'Exportations',
+                        data: [1800, 1950, 2600, 3100, 3909, 5935],
+                        borderColor: brandColors.success,
+                        backgroundColor: brandColors.success + '20',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Importations',
+                        data: [4200, 4600, 5100, 6200, 7161, 7279],
+                        borderColor: brandColors.blue,
+                        backgroundColor: brandColors.blue + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' Mds FCFA';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' Mds';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Balance Commerciale
+            new Chart(document.getElementById('chart-ce-balance'), {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'Balance Commerciale',
+                        data: [-2400, -2650, -2500, -3100, -3252, -1344],
+                        backgroundColor: [-2400, -2650, -2500, -3100, -3252, -1344].map(v => v < -2500 ? brandColors.danger : brandColors.gold),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Balance: ' + context.parsed.y.toLocaleString() + ' Mds FCFA';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' Mds';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Top Destinations
+            new Chart(document.getElementById('chart-ce-destinations'), {
+                type: 'bar',
+                data: {
+                    labels: ['Suisse', 'Belgique', 'Mali', 'Espagne', 'Royaume-Uni'],
+                    datasets: [{
+                        label: 'Exportations (Mds FCFA)',
+                        data: [210, 145, 132, 98, 87],
+                        backgroundColor: brandColors.blue,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' Mds';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 4: Top Fournisseurs
+            new Chart(document.getElementById('chart-ce-fournisseurs'), {
+                type: 'bar',
+                data: {
+                    labels: ['Chine', 'France', 'Russie', 'Inde', 'Pays-Bas'],
+                    datasets: [{
+                        label: 'Importations (Mds FCFA)',
+                        data: [142, 98, 87, 76, 54],
+                        backgroundColor: brandColors.sky,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' Mds';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 5: Structure Exportations
+            new Chart(document.getElementById('chart-ce-structure'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Or non monétaire', 'Huiles brutes pétrole', 'Produits pétroliers raffinés', 'Acide phosphorique', 'Autres'],
+                    datasets: [{
+                        data: [206.8, 106.3, 90.4, 45.2, 376.6],
+                        backgroundColor: [brandColors.gold, brandColors.navy, brandColors.blue, brandColors.sky, brandColors.ice]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.parsed.toLocaleString() + ' Mds (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // COMMERCE INTÉRIEUR CHARTS
+        // ============================================
+        function initCommerceInterieurCharts() {
+            // Chart 1: IPC Evolution
+            new Chart(document.getElementById('chart-ci-ipc'), {
+                type: 'line',
+                data: {
+                    labels: ['T1-21','T2-21','T3-21','T4-21','T1-22','T2-22','T3-22','T4-22','T1-23','T2-23','T3-23','T4-23','T1-24','T2-24','T3-24','T4-24','T1-25','T2-25','T3-25','T4-25'],
+                    datasets: [{
+                        label: 'IPC (Base 100)',
+                        data: [100,101.2,102.1,103.5,104.8,106.2,107.1,108.3,109.5,110.8,112.1,113.2,114.5,115.3,116.2,117.1,117.8,118.5,119.2,119.9],
+                        borderColor: brandColors.blue,
+                        backgroundColor: brandColors.blue + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 95
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Ventes au détail
+            new Chart(document.getElementById('chart-ci-ventes'), {
+                type: 'bar',
+                data: {
+                    labels: ['T1-21','T2-21','T3-21','T4-21','T1-22','T2-22','T3-22','T4-22','T1-23','T2-23','T3-23','T4-23','T1-24','T2-24','T3-24','T4-24','T1-25','T2-25','T3-25'],
+                    datasets: [{
+                        label: 'Variation annuelle (%)',
+                        data: [5.2,31.2,18.4,12.1,8.3,7.2,6.1,5.8,5.2,4.8,5.1,5.5,5.8,6.2,7.1,7.8,8.1,8.5,8.3],
+                        backgroundColor: brandColors.success,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Marchés par région
+            new Chart(document.getElementById('chart-ci-marches'), {
+                type: 'bar',
+                data: {
+                    labels: ['Dakar', 'Thiès', 'Diourbel', 'Saint-Louis', 'Ziguinchor'],
+                    datasets: [{
+                        label: 'Nombre de marchés',
+                        data: [12, 7, 5, 4, 3],
+                        backgroundColor: brandColors.navy,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Chart 4: Structure consommation
+            new Chart(document.getElementById('chart-ci-consommation'), {
+                type: 'pie',
+                data: {
+                    labels: ['Alimentation', 'Transport', 'Logement', 'Santé', 'Habillement', 'Autres'],
+                    datasets: [{
+                        data: [52, 12, 11, 8, 7, 10],
+                        backgroundColor: [brandColors.blue, brandColors.sky, brandColors.gold, brandColors.success, brandColors.navy, brandColors.ice]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // INDUSTRIE CHARTS
+        // ============================================
+        function initIndustrieCharts() {
+            // Chart 1: IHPI Mensuel
+            new Chart(document.getElementById('chart-ind-ihpi'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+                    datasets: [{
+                        label: 'IHPI Variation (%)',
+                        data: [18.2, 20.1, 21.5, 22.3, 23.1, 22.8, 23.0, 24.2, 24.5, 25.1, 26.3, 27.5],
+                        borderColor: brandColors.success,
+                        backgroundColor: brandColors.success + '20',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'IHPI Indice',
+                        data: [112, 115, 118, 120, 122, 121, 123, 125, 126, 128, 130, 132],
+                        borderColor: brandColors.blue,
+                        backgroundColor: brandColors.blue + '20',
+                        tension: 0.4,
+                        fill: false,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: ICAI Trimestriel
+            new Chart(document.getElementById('chart-ind-icai'), {
+                type: 'bar',
+                data: {
+                    labels: ['T1-24','T2-24','T3-24','T4-24','T1-25','T2-25','T3-25'],
+                    datasets: [{
+                        label: 'Extractives',
+                        data: [32.1,28.5,35.2,42.1,45.8,48.2,42.1],
+                        backgroundColor: brandColors.gold
+                    }, {
+                        label: 'Manufacturier',
+                        data: [5.2,4.8,5.1,5.5,5.8,6.1,6.2],
+                        backgroundColor: brandColors.blue
+                    }, {
+                        label: 'Energie',
+                        data: [8.1,7.8,9.2,10.1,11.2,12.1,11.8],
+                        backgroundColor: brandColors.sky
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            stacked: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            stacked: false
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Structure production
+            new Chart(document.getElementById('chart-ind-structure'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Industries extractives', 'Industries manufacturières', 'Energie et eau', 'BTP'],
+                    datasets: [{
+                        data: [35, 38, 18, 9],
+                        backgroundColor: [brandColors.gold, brandColors.blue, brandColors.sky, brandColors.navy]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 4: IPPI
+            new Chart(document.getElementById('chart-ind-ippi'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+                    datasets: [{
+                        label: 'IPPI Variation (%)',
+                        data: [0.2,0.3,0.4,0.5,0.4,0.3,0.4,0.5,0.5,0.6,0.5,0.6],
+                        borderColor: brandColors.blue,
+                        backgroundColor: brandColors.blue + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 5: Taux utilisation
+            new Chart(document.getElementById('chart-ind-utilisation'), {
+                type: 'bar',
+                data: {
+                    labels: ['T1 2025', 'T2 2025', 'T3 2025', 'T4 2025'],
+                    datasets: [{
+                        label: 'Taux d\'utilisation (%)',
+                        data: [85.2, 87.1, 89.1, 91.3],
+                        backgroundColor: [
+                            brandColors.sky,
+                            brandColors.blue,
+                            brandColors.success,
+                            brandColors.gold
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 80,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // PME CHARTS
+        // ============================================
+        function initPMECharts() {
+            // Chart 1: Climat des affaires
+            new Chart(document.getElementById('chart-pme-climat'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct'],
+                    datasets: [{
+                        label: 'Indicateur Climat des Affaires',
+                        data: [98.2, 98.8, 99.1, 99.5, 100.2, 100.8, 101.2, 101.5, 101.8, 102.0],
+                        borderColor: brandColors.success,
+                        backgroundColor: brandColors.success + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 95
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Répartition PME par secteur
+            new Chart(document.getElementById('chart-pme-secteur'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Commerce', 'Services', 'Industrie/Artisanat', 'Agriculture/Agro', 'BTP'],
+                    datasets: [{
+                        data: [38, 25, 18, 12, 7],
+                        backgroundColor: [brandColors.blue, brandColors.sky, brandColors.gold, brandColors.success, brandColors.navy]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Accès au financement
+            new Chart(document.getElementById('chart-pme-financement'), {
+                type: 'bar',
+                data: {
+                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'FONGIP Garanties',
+                        data: [28.1, 31.5, 35.2, 40.8, 45.3],
+                        backgroundColor: brandColors.gold
+                    }, {
+                        label: 'DER/FJ',
+                        data: [8.2, 9.5, 11.2, 14.5, 18.7],
+                        backgroundColor: brandColors.success
+                    }, {
+                        label: 'Crédits bancaires',
+                        data: [180, 210, 245, 280, 320],
+                        backgroundColor: brandColors.blue
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' Mds FCFA';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' Mds';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 4: Répartition par taille
+            new Chart(document.getElementById('chart-pme-taille'), {
+                type: 'bar',
+                data: {
+                    labels: ['Micro (< 5)', 'Petites (5-19)', 'Moyennes (20-99)', 'Grandes (100+)'],
+                    datasets: [{
+                        label: 'Répartition (%)',
+                        data: [68, 22, 8, 2],
+                        backgroundColor: [brandColors.blue, brandColors.sky, brandColors.gold, brandColors.navy],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 5: PME par région
+            new Chart(document.getElementById('chart-pme-region'), {
+                type: 'bar',
+                data: {
+                    labels: ['Dakar', 'Thiès', 'Kaolack', 'Saint-Louis', 'Ziguinchor'],
+                    datasets: [{
+                        label: 'Part (%)',
+                        data: [58, 12, 7, 5, 4],
+                        backgroundColor: brandColors.blue,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

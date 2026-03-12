@@ -3,7 +3,7 @@ import { getTradeDashboardData } from '../utils/wits-api'
 
 export async function commerceExterieurPage(): Promise<string> {
   const data = await getTradeDashboardData()
-  const { overview, timeSeries, sectors, topExportPartners, topImportPartners, latestYear } = data
+  const { overview, timeSeries, sectors, topExportPartners, topImportPartners, latestYear, latestReleaseYear } = data as any
 
   // Format numbers
   const fmt = (n: number) => {
