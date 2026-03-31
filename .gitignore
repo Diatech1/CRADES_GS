@@ -10,3 +10,6 @@ pids/
 *.seed
 *.tar.gz
 *.backup
+core
+proxy.js
+proxy.cjs

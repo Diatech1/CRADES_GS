@@ -1,147 +1,94 @@
 import { layout } from '../components/layout'
-import { getWpUrl } from '../utils/wp-api'
 
-export async function contactPage(): Promise<string> {
-  const wpUrl = getWpUrl()
+export function contactPage(): string {
+  const lang = 'fr'
 
   const content = `
-<section class="bg-brand-navy py-16 lg:py-20">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+<!-- Hero -->
+<section class="bg-brand-navy py-14 lg:py-18">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <nav class="text-xs text-gray-400 mb-4">
       <a href="/" class="hover:text-white">Accueil</a>
-      <span class="mx-2 text-gray-600">/</span>
+      <span class="mx-2">/</span>
       <span class="text-gray-300">Contact</span>
     </nav>
-    <h1 class="font-display text-2xl lg:text-3xl text-white">Contactez-nous</h1>
-    <p class="text-gray-400 mt-2 max-w-xl text-sm">Pour toute question, demande de données ou partenariat.</p>
+    <h1 class="text-3xl lg:text-4xl font-bold text-white tracking-tight">Contact</h1>
+    <p class="mt-3 text-base text-gray-300 max-w-3xl">Une question, une demande de données ou un partenariat ? Contactez-nous.</p>
   </div>
 </section>
 
-<section class="py-12">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="grid lg:grid-cols-3 gap-10">
+<section class="py-12 bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="grid lg:grid-cols-[1fr_320px] gap-8">
+
       <!-- Form -->
-      <div class="lg:col-span-2">
-        <form id="contactForm" class="space-y-5">
+      <div class="bg-white rounded-xl border border-gray-100 p-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-6">Envoyez-nous un message</h2>
+        <form id="contactForm" class="space-y-5" onsubmit="event.preventDefault(); document.getElementById('contactStatus').className='text-sm py-2 px-3 rounded-lg bg-emerald-50 text-emerald-700'; document.getElementById('contactStatus').textContent='Message envoyé avec succès. Nous vous répondrons dans les meilleurs délais.'; document.getElementById('contactStatus').classList.remove('hidden');">
           <div class="grid sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Nom complet *</label>
-              <input type="text" name="name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20" placeholder="Votre nom">
+              <label class="block text-xs font-medium text-gray-600 mb-1">Nom complet *</label>
+              <input type="text" name="name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20">
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Email *</label>
-              <input type="email" name="email" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20" placeholder="votre@email.com">
-            </div>
-          </div>
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Organisation</label>
-              <input type="text" name="organization" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20" placeholder="Nom de votre organisation">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Sujet</label>
-              <select name="subject" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20">
-                <option value="">Sélectionner</option>
-                <option value="data">Demande de données</option>
-                <option value="partnership">Partenariat</option>
-                <option value="press">Presse / Médias</option>
-                <option value="api">API / Accès technique</option>
-                <option value="other">Autre</option>
-              </select>
+              <label class="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+              <input type="email" name="email" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20">
             </div>
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1.5">Message *</label>
-            <textarea name="message" rows="5" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 resize-none focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20" placeholder="Votre message..."></textarea>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Organisation</label>
+            <input type="text" name="organization" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20">
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] text-gray-400">* Champs obligatoires</span>
-            <button type="submit" class="text-sm font-medium bg-brand-blue text-white px-5 py-2.5 rounded-lg hover:bg-brand-navy transition-colors">
-              <i class="fas fa-paper-plane mr-1.5 text-xs"></i>Envoyer
-            </button>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Sujet</label>
+            <select name="subject" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-blue bg-white">
+              <option value="">Choisir...</option>
+              <option>Demande de données</option>
+              <option>Partenariat</option>
+              <option>Question générale</option>
+              <option>Signaler un problème</option>
+            </select>
           </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Message *</label>
+            <textarea name="message" rows="5" required class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20 resize-none"></textarea>
+          </div>
+          <div id="contactStatus" class="hidden text-sm py-2 px-3 rounded-lg"></div>
+          <button type="submit" class="bg-brand-blue text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-navy transition-colors">
+            Envoyer
+          </button>
         </form>
-        <div id="formMessage" class="hidden mt-4 p-4 rounded-lg text-sm"></div>
       </div>
 
-      <!-- Info sidebar -->
-      <div class="space-y-6">
-        <div class="border border-gray-100 rounded-lg p-5">
-          <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-4">Coordonnées</h3>
-          <div class="space-y-4">
+      <!-- Sidebar -->
+      <aside class="space-y-6">
+        <div class="bg-white rounded-xl border border-gray-100 p-6">
+          <h3 class="text-sm font-semibold text-gray-800 mb-4">Coordonnées</h3>
+          <div class="space-y-4 text-sm">
             <div class="flex items-start gap-3">
-              <i class="fas fa-map-marker-alt text-brand-gold text-xs mt-1"></i>
-              <div class="text-xs text-gray-500 leading-relaxed">Immeuble CRADES<br>Rue Aimé Césaire, Plateau<br>Dakar, Sénégal</div>
+              <i class="fas fa-map-marker-alt text-brand-blue mt-0.5"></i>
+              <div class="text-gray-600">Rue Aimé Césaire, Plateau<br>Dakar, Sénégal</div>
             </div>
-            <div class="flex items-start gap-3">
-              <i class="fas fa-phone-alt text-brand-gold text-xs mt-1"></i>
-              <div class="text-xs text-gray-500">+221 33 889 12 34<br>+221 33 889 12 35</div>
+            <div class="flex items-center gap-3">
+              <i class="fas fa-phone text-brand-blue"></i>
+              <span class="text-gray-600">+221 33 889 12 34</span>
             </div>
-            <div class="flex items-start gap-3">
-              <i class="fas fa-envelope text-brand-gold text-xs mt-1"></i>
-              <div class="text-xs text-gray-500">contact@crades.gouv.sn<br>info@crades.gouv.sn</div>
+            <div class="flex items-center gap-3">
+              <i class="fas fa-envelope text-brand-blue"></i>
+              <a href="mailto:contact@crades.gouv.sn" class="text-brand-blue hover:underline">contact@crades.gouv.sn</a>
             </div>
           </div>
         </div>
-
-        <div class="border border-gray-100 rounded-lg p-5">
-          <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-3">Horaires</h3>
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between"><span class="text-gray-400">Lundi - Vendredi</span><span class="text-gray-700 font-medium">8h00 - 17h00</span></div>
-            <div class="flex justify-between"><span class="text-gray-400">Samedi</span><span class="text-gray-700 font-medium">9h00 - 13h00</span></div>
-            <div class="flex justify-between"><span class="text-gray-400">Dimanche</span><span class="text-red-500 font-medium">Fermé</span></div>
-          </div>
+        <div class="bg-brand-frost rounded-xl p-6">
+          <h3 class="text-sm font-semibold text-gray-800 mb-2">Horaires</h3>
+          <p class="text-xs text-gray-500">Lundi - Vendredi : 8h00 - 17h00</p>
+          <p class="text-xs text-gray-400 mt-1">Samedi, Dimanche : Fermé</p>
         </div>
-
-        <div class="border border-gray-100 rounded-lg overflow-hidden">
-          <div class="h-44 relative">
-            <iframe 
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-17.4520%2C14.6910%2C-17.4420%2C14.6970&layer=mapnik&marker=14.6940%2C-17.4470" 
-              class="absolute inset-0 w-full h-full border-0"
-              loading="lazy"></iframe>
-          </div>
-          <div class="p-2.5 text-center">
-            <a href="https://www.openstreetmap.org/?mlat=14.6940&mlon=-17.4470#map=17/14.6940/-17.4470" target="_blank" class="text-[11px] text-brand-gold hover:underline">
-              <i class="fas fa-external-link-alt mr-1"></i>Voir sur la carte
-            </a>
-          </div>
-        </div>
-      </div>
+      </aside>
     </div>
   </div>
 </section>
-
-<script>
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form));
-  const msgEl = document.getElementById('formMessage');
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const result = await res.json();
-    if (result.success) {
-      msgEl.className = 'mt-4 p-4 rounded-lg bg-emerald-50 text-emerald-700 text-sm';
-      msgEl.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Message envoyé avec succès !';
-      form.reset();
-    } else {
-      msgEl.className = 'mt-4 p-4 rounded-lg bg-red-50 text-red-700 text-sm';
-      msgEl.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>' + (result.error || 'Erreur lors de l\\'envoi');
-    }
-  } catch(err) {
-    msgEl.className = 'mt-4 p-4 rounded-lg bg-red-50 text-red-700 text-sm';
-    msgEl.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>Erreur de connexion';
-  }
-});
-</script>
 `
-  return layout(content, {
-    title: 'Contact',
-    description: 'Contactez le CRADES',
-    path: '/contact'
-  })
+
+  return layout(content, { title: 'Contact', path: '/contact', lang })
 }

@@ -1,4 +1,4 @@
-// CRADES Layout — Clean institutional design
+// CRADES Layout — Clean institutional design (dashboards only)
 const t = (fr: string, en: string, lang: string) => lang === 'en' ? en : fr
 
 export function layout(content: string, options: { title?: string; description?: string; lang?: string; path?: string } = {}) {
@@ -79,8 +79,8 @@ export function layout(content: string, options: { title?: string; description?:
 
 <!-- Ministry top bar -->
 <div class="bg-white border-b border-gray-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-1 flex justify-center">
-    <img src="/static/img/logo-mincom.png" alt="MINCOM" class="h-10 w-auto">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex justify-center">
+    <img src="/static/img/logo-mincom.png" alt="MINCOM" class="w-auto" style="height:65px">
   </div>
 </div>
 
@@ -89,31 +89,31 @@ export function layout(content: string, options: { title?: string; description?:
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="flex items-center justify-between h-20">
       <!-- Logo -->
-      <a href="/${lang === 'en' ? '?lang=en' : ''}" class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-3">
         <img src="/static/img/logo-crades.png" alt="CRADES" class="h-16 w-auto">
       </a>
 
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center gap-5 xl:gap-6 text-[13px] font-medium text-gray-500">
-        <a href="/${lang === 'en' ? '?lang=en' : ''}" class="hover:text-brand-blue transition-colors whitespace-nowrap">${t('Accueil', 'Home', lang)}</a>
-        <a href="/${lang === 'en' ? 'about' : 'a-propos'}" class="hover:text-brand-blue transition-colors whitespace-nowrap">${t('À propos', 'About', lang)}</a>
-        <a href="/publications${lang === 'en' ? '?lang=en' : ''}" class="hover:text-brand-blue transition-colors whitespace-nowrap">${t('Publications', 'Publications', lang)}</a>
+        <a href="/" class="hover:text-brand-blue transition-colors whitespace-nowrap ${path === '/' ? 'text-brand-blue' : ''}">${t('Accueil', 'Home', lang)}</a>
+        <a href="/a-propos" class="hover:text-brand-blue transition-colors whitespace-nowrap ${path === '/a-propos' ? 'text-brand-blue' : ''}">${t('À propos', 'About', lang)}</a>
+        <a href="/publications" class="hover:text-brand-blue transition-colors whitespace-nowrap ${path === '/publications' ? 'text-brand-blue' : ''}">${t('Publications', 'Publications', lang)}</a>
         <div class="relative group">
-          <button class="hover:text-brand-blue transition-colors flex items-center gap-1 whitespace-nowrap" onclick="this.parentElement.querySelector('.dropdown-menu').classList.toggle('hidden')">
-            <a href="/${lang === 'en' ? 'dashboards' : 'tableaux-de-bord'}" class="hover:text-brand-blue">${t('Tableaux de bord', 'Dashboards', lang)}</a>
+          <button class="hover:text-brand-blue transition-colors flex items-center gap-1 whitespace-nowrap">
+            <span class="${['/commerce-exterieur','/commerce-interieur','/industrie','/pme-pmi'].includes(path) ? 'text-brand-blue' : ''}">${t('Tableaux de bord', 'Dashboards', lang)}</span>
             <i class="fas fa-chevron-down text-[8px] text-gray-400 group-hover:text-brand-blue transition-colors"></i>
           </button>
-          <div class="dropdown-menu absolute top-full left-0 pt-2 hidden group-hover:block">
+          <div class="absolute top-full left-0 pt-2 hidden group-hover:block">
             <div class="bg-white border border-gray-100 rounded-lg shadow-lg py-2 min-w-[220px]">
-              <a href="/commerce-exterieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
-              <a href="/commerce-interieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Commerce intérieur', 'Domestic Trade', lang)}</a>
-              <a href="/industrie" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('Industrie', 'Industry', lang)}</a>
-              <a href="/pme-pmi" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors">${t('PME/PMI', 'SMEs/SMBs', lang)}</a>
+              <a href="/commerce-exterieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors ${path === '/commerce-exterieur' ? 'text-brand-blue font-semibold' : ''}">${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
+              <a href="/commerce-interieur" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors ${path === '/commerce-interieur' ? 'text-brand-blue font-semibold' : ''}">${t('Commerce intérieur', 'Domestic Trade', lang)}</a>
+              <a href="/industrie" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors ${path === '/industrie' ? 'text-brand-blue font-semibold' : ''}">${t('Industrie', 'Industry', lang)}</a>
+              <a href="/pme-pmi" class="block px-4 py-2 text-[13px] text-gray-500 hover:text-brand-blue hover:bg-gray-50 transition-colors ${path === '/pme-pmi' ? 'text-brand-blue font-semibold' : ''}">${t('PME/PMI', 'SMEs/SMBs', lang)}</a>
             </div>
           </div>
         </div>
-        <a href="/${lang === 'en' ? 'news?lang=en' : 'actualites'}" class="hover:text-brand-blue transition-colors whitespace-nowrap">${t('Actualités', 'News', lang)}</a>
-        <a href="/contact${lang === 'en' ? '?lang=en' : ''}" class="hover:text-brand-blue transition-colors whitespace-nowrap">Contact</a>
+        <a href="/actualites" class="hover:text-brand-blue transition-colors whitespace-nowrap ${path === '/actualites' ? 'text-brand-blue' : ''}">${t('Actualités', 'News', lang)}</a>
+        <a href="/contact" class="hover:text-brand-blue transition-colors whitespace-nowrap ${path === '/contact' ? 'text-brand-blue' : ''}">Contact</a>
       </nav>
 
       <!-- Right -->
@@ -123,9 +123,6 @@ export function layout(content: string, options: { title?: string; description?:
           <span class="text-gray-300">|</span>
           <a href="${path}${path.includes('?') ? '&' : '?'}lang=en" class="${lang === 'en' ? 'text-brand-blue font-semibold' : 'hover:text-gray-600'}">EN</a>
         </div>
-        <button onclick="document.getElementById('searchModal').classList.toggle('hidden')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-brand-blue transition-colors rounded-full hover:bg-gray-50">
-          <i class="fas fa-search text-sm"></i>
-        </button>
         <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden w-8 h-8 flex items-center justify-center text-gray-500">
           <i class="fas fa-bars"></i>
         </button>
@@ -145,65 +142,22 @@ export function layout(content: string, options: { title?: string; description?:
     </button>
   </div>
   <nav class="p-4 space-y-1">
-    <a href="/${lang === 'en' ? '?lang=en' : ''}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Accueil', 'Home', lang)}</a>
-    <a href="/${lang === 'en' ? 'about' : 'a-propos'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('À propos', 'About', lang)}</a>
-    <a href="/publications${lang === 'en' ? '?lang=en' : ''}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Publications', 'Publications', lang)}</a>
-    <a href="/${lang === 'en' ? 'dashboards' : 'tableaux-de-bord'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Tableaux de bord', 'Dashboards', lang)}</a>
+    <a href="/" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Accueil', 'Home', lang)}</a>
+    <a href="/a-propos" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('À propos', 'About', lang)}</a>
+    <a href="/publications" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Publications', 'Publications', lang)}</a>
+    <div class="block px-4 py-3 rounded-lg text-gray-600 font-medium text-sm">${t('Tableaux de bord', 'Dashboards', lang)}</div>
     <a href="/commerce-exterieur" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Commerce extérieur', 'Foreign Trade', lang)}</a>
     <a href="/commerce-interieur" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Commerce intérieur', 'Domestic Trade', lang)}</a>
     <a href="/industrie" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('Industrie', 'Industry', lang)}</a>
     <a href="/pme-pmi" class="block pl-8 pr-4 py-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-medium text-sm"><i class="fas fa-chevron-right text-[8px] mr-2"></i>${t('PME/PMI', 'SMEs/SMBs', lang)}</a>
-    <a href="/${lang === 'en' ? 'news?lang=en' : 'actualites'}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Actualités', 'News', lang)}</a>
-    <a href="/contact${lang === 'en' ? '?lang=en' : ''}" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Contact</a>
+    <a href="/actualites" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">${t('Actualités', 'News', lang)}</a>
+    <a href="/contact" class="block px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium text-sm">Contact</a>
     <div class="pt-3 border-t border-gray-100 mt-3 flex gap-3 px-4 text-sm">
       <a href="${path}?lang=fr" class="${lang === 'fr' ? 'text-brand-blue font-semibold' : 'text-gray-400'}">Français</a>
       <a href="${path}?lang=en" class="${lang === 'en' ? 'text-brand-blue font-semibold' : 'text-gray-400'}">English</a>
     </div>
   </nav>
 </div>
-
-<!-- Search Modal -->
-<div id="searchModal" class="hidden fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm flex items-start justify-center pt-24">
-  <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-      <i class="fas fa-search text-gray-300"></i>
-      <input id="searchInput" type="text" placeholder="${t('Rechercher...', 'Search...', lang)}" 
-        class="flex-1 text-sm outline-none text-gray-700 placeholder:text-gray-300"
-        onkeyup="handleSearch(this.value)" autofocus>
-      <button onclick="document.getElementById('searchModal').classList.add('hidden')" class="text-gray-300 hover:text-gray-500">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div id="searchResults" class="max-h-72 overflow-y-auto"></div>
-  </div>
-</div>
-<script>
-document.getElementById('searchModal')?.addEventListener('click', function(e) {
-  if (e.target === this) this.classList.add('hidden');
-});
-let searchTimeout;
-function handleSearch(q) {
-  clearTimeout(searchTimeout);
-  const results = document.getElementById('searchResults');
-  if (q.length < 2) { results.innerHTML = ''; return; }
-  searchTimeout = setTimeout(async () => {
-    try {
-      const res = await fetch('/api/search?q=' + encodeURIComponent(q));
-      const data = await res.json();
-      if (data.results?.length > 0) {
-        results.innerHTML = data.results.map(r => 
-          '<a href="' + r.url + '" class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">' +
-          '<div class="flex-1 min-w-0"><div class="text-sm font-medium text-gray-700 truncate">' + r.title + '</div>' +
-          '<div class="text-xs text-gray-400 mt-0.5">' + (r.type || '') + '</div></div>' +
-          '<i class="fas fa-chevron-right text-[10px] text-gray-300"></i></a>'
-        ).join('');
-      } else {
-        results.innerHTML = '<p class="text-center text-gray-400 text-sm py-8">${t('Aucun résultat', 'No results', lang)}</p>';
-      }
-    } catch(e) { console.error(e); }
-  }, 300);
-}
-</script>
 
 <!-- Main -->
 <main class="min-h-screen">
@@ -223,19 +177,18 @@ ${content}
       <div>
         <h4 class="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-3">${t('Navigation', 'Navigation', lang)}</h4>
         <ul class="space-y-2 text-xs text-gray-400">
-          <li><a href="/${lang === 'en' ? 'about' : 'a-propos'}" class="hover:text-gray-600">${t('À propos', 'About', lang)}</a></li>
-          <li><a href="/publications${lang === 'en' ? '?lang=en' : ''}" class="hover:text-gray-600">${t('Publications', 'Publications', lang)}</a></li>
-          <li><a href="/${lang === 'en' ? 'dashboards' : 'tableaux-de-bord'}" class="hover:text-gray-600">${t('Tableaux de bord', 'Dashboards', lang)}</a></li>
-          <li><a href="/${lang === 'en' ? 'news?lang=en' : 'actualites'}" class="hover:text-gray-600">${t('Actualités', 'News', lang)}</a></li>
+          <li><a href="/a-propos" class="hover:text-gray-600">${t('À propos', 'About', lang)}</a></li>
+          <li><a href="/publications" class="hover:text-gray-600">${t('Publications', 'Publications', lang)}</a></li>
+          <li><a href="/actualites" class="hover:text-gray-600">${t('Actualités', 'News', lang)}</a></li>
         </ul>
       </div>
       <div>
-        <h4 class="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-3">${t('Ressources', 'Resources', lang)}</h4>
+        <h4 class="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-3">${t('Tableaux de bord', 'Dashboards', lang)}</h4>
         <ul class="space-y-2 text-xs text-gray-400">
-          <li><a href="/api/indicators" class="hover:text-gray-600">API</a></li>
-          <li><a href="/${lang === 'en' ? 'data' : 'donnees'}" class="hover:text-gray-600">${t('Données', 'Data', lang)}</a></li>
-          <li><a href="/sitemap.xml" class="hover:text-gray-600">${t('Plan du site', 'Sitemap', lang)}</a></li>
-          <li><a href="/contact${lang === 'en' ? '?lang=en' : ''}" class="hover:text-gray-600">Contact</a></li>
+          <li><a href="/commerce-exterieur" class="hover:text-gray-600">${t('Commerce extérieur', 'Foreign Trade', lang)}</a></li>
+          <li><a href="/commerce-interieur" class="hover:text-gray-600">${t('Commerce intérieur', 'Domestic Trade', lang)}</a></li>
+          <li><a href="/industrie" class="hover:text-gray-600">${t('Industrie', 'Industry', lang)}</a></li>
+          <li><a href="/pme-pmi" class="hover:text-gray-600">${t('PME/PMI', 'SMEs/SMBs', lang)}</a></li>
         </ul>
       </div>
       <div>
